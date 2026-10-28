@@ -152,6 +152,20 @@
   .dcard .more,.dcard .del-btn{position:relative;z-index:2}
   .dlist{list-style:none;display:flex;flex-direction:column;gap:12px}
 
+  .dphoto{display:block;width:100%;margin:6px 0 8px;padding:0;border:none;background:#F3EEE4;border-radius:12px;overflow:hidden;cursor:zoom-in;position:relative;z-index:2;aspect-ratio:4/3}
+  .dphoto img{display:block;width:100%;height:100%;object-fit:cover}
+  .dcard.open .dphoto{aspect-ratio:auto}
+  .dcard.open .dphoto img{height:auto;max-height:70vh;object-fit:contain;background:#F3EEE4}
+  .pick{display:flex;align-items:center;gap:12px}
+  .pick-btn{font-family:inherit;font-size:13.5px;font-weight:700;color:var(--oto);background:#fff;border:1.5px dashed #E3B4C2;border-radius:12px;padding:12px 16px;cursor:pointer;flex:1}
+  .pick-prev{position:relative;display:none;width:100%}
+  .pick-prev.show{display:block}
+  .pick-prev img{display:block;width:100%;max-height:220px;object-fit:cover;border-radius:12px}
+  .pick-prev .rm{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;border:none;background:rgba(46,49,72,.75);color:#fff;font-size:16px;cursor:pointer}
+  .pick-note{font-size:11.5px;color:var(--ink-soft);margin-top:4px}
+  #lightbox{position:fixed;inset:0;background:rgba(20,20,30,.92);display:none;align-items:center;justify-content:center;z-index:40;padding:16px;cursor:zoom-out}
+  #lightbox.show{display:flex}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:8px}
   #add-fab.diary{background:linear-gradient(135deg,var(--oto),#B04F6A);box-shadow:0 6px 18px rgba(176,79,106,.4)}
   #diary-modal{position:fixed;inset:0;background:rgba(46,49,72,.4);display:none;align-items:flex-end;justify-content:center;z-index:20}
   #diary-modal.show{display:flex}
@@ -259,6 +273,12 @@
         </div>
         <div><label for="d-title">タイトル（任意）</label><input type="text" id="d-title" placeholder="例：急遽、夜の海へドライブ" maxlength="60"></div>
         <div><label for="d-body">本文</label><textarea id="d-body" placeholder="なにがあった？どう思った？"></textarea></div>
+        <div>
+          <label>写真（1枚まで・任意）</label>
+          <input type="file" id="d-file" accept="image/*" style="display:none">
+          <div class="pick" id="d-pick"><button type="button" class="pick-btn" id="d-pick-btn">📷 写真をえらぶ</button></div>
+          <div class="pick-prev" id="d-prev"><img id="d-prev-img" alt="選んだ写真"><button type="button" class="rm" id="d-rm" aria-label="写真を外す">✕</button></div>
+        </div>
         <p class="form-msg" id="d-msg"></p>
         <div class="form-btns">
           <button class="send oto" id="d-send">日記に残す</button>
@@ -268,6 +288,7 @@
     </div>
   </div>
 
+  <div id="lightbox" role="dialog" aria-label="写真"><img id="lb-img" alt=""></div>
   <div id="toast" aria-live="polite"></div>
 
 <script>
@@ -486,12 +507,12 @@
       diary=[];
       if(hr>-1){  // 日記シートがまだ無い場合、gvizは別シートを返すので見出しで判定
         var H=rows[hr], ix=function(n){return H.indexOf(n);};
-        var cD=ix("日付"),cP=ix("書いた人"),cT=ix("タイトル"),cB=ix("本文"),cC=ix("記録日時"),cI=ix("ID");
+        var cD=ix("日付"),cP=ix("書いた人"),cT=ix("タイトル"),cB=ix("本文"),cC=ix("記録日時"),cI=ix("ID"),cF=ix("写真");
         for(var r=hr+1;r<rows.length;r++){
           var row=rows[r], body=(row[cB]||"").trim(), title=(row[cT]||"").trim();
-          if(!body && !title) continue;
+          if(!body && !title && !(cF>-1 && (row[cF]||"").trim())) continue;
           diary.push({date:(row[cD]||"").trim(),person:(row[cP]||"").trim(),title:title,body:body,
-            created:(row[cC]||"").trim(),id:(row[cI]||"").trim()});
+            created:(row[cC]||"").trim(),id:(row[cI]||"").trim(),photo:cF>-1?(row[cF]||"").trim():""});
         }
       }
       diaryLoaded=true; renderDiary();
@@ -510,6 +531,13 @@
     });
   }
 
+  function photoSrc(e,w){
+    if(e.localPhoto) return e.localPhoto;
+    if(!e.photo || !/^[\w-]{10,}$/.test(e.photo)) return "";
+    return "https://drive.google.com/thumbnail?id="+encodeURIComponent(e.photo)+"&sz=w"+w;
+  }
+  var lb=document.getElementById("lightbox");
+  lb.addEventListener("click",function(){ lb.classList.remove("show"); document.getElementById("lb-img").src=""; });
   function dcardHTML(e,i){
     var d=parseD(e.date), cls=personClass(e.person), key="d"+i;
     var open=diaryOpen===key, long=e.body.length>110 || (e.body.match(/\n/g)||[]).length>4;
@@ -518,6 +546,8 @@
     h+='<button class="dcard-tap" data-dact="toggle" data-k="'+key+'" aria-label="この日記を開く"></button>';
     h+='<div class="stampcol"><div class="day">'+(d?d.getDate():"—")+'</div><div class="wd'+wdc+'">'+(wd?wd+"曜":"")+'</div></div>';
     h+='<div class="dbody"><div class="dmeta"><span class="badge '+cls+'">'+esc(e.person||"ふたり")+'</span></div>';
+    var psrc=photoSrc(e, open?1600:900);
+    if(psrc) h+='<button class="dphoto" data-dact="photo" data-k="'+key+'" aria-label="写真を大きく見る"><img src="'+esc(psrc)+'" alt="" loading="lazy"></button>';
     if(e.title) h+='<div class="dtitle">'+esc(e.title)+'</div>';
     if(e.body) h+='<div class="dtext">'+esc(e.body)+'</div>';
     if(long && !open) h+='<button class="more" data-dact="toggle" data-k="'+key+'">続きを読む</button>';
@@ -545,6 +575,7 @@
   document.addEventListener("click",function(ev){
     var el=ev.target.closest("[data-dact]"); if(!el) return;
     var key=el.dataset.k, i=+key.slice(1), e=diary[i]; if(!e) return;
+    if(el.dataset.dact==="photo"){ document.getElementById("lb-img").src=photoSrc(e,2000); lb.classList.add("show"); return; }
     if(el.dataset.dact==="toggle"){ diaryOpen=(diaryOpen===key)?null:key; armedDel=null; renderDiary(); return; }
     if(el.dataset.dact==="del"){
       if(armedDel!==key){ armedDel=key; renderDiary(); return; }
@@ -582,10 +613,34 @@
     document.getElementById("d-title").value="";
     document.getElementById("d-body").value=lsGet("fs8k2-draft")||"";
     document.getElementById("d-msg").classList.remove("show");
-    syncWho(); dModal.classList.add("show");
+    clearPhoto(); syncWho(); dModal.classList.add("show");
     setTimeout(function(){document.getElementById("d-body").focus();},120);
   }
   function closeDiaryModal(){ dModal.classList.remove("show"); }
+  var dPhoto=null; // {b64, type, url}
+  var dFile=document.getElementById("d-file");
+  function clearPhoto(){ dPhoto=null; dFile.value=""; document.getElementById("d-prev").classList.remove("show"); document.getElementById("d-pick").style.display="flex"; }
+  document.getElementById("d-pick-btn").addEventListener("click",function(){ dFile.click(); });
+  document.getElementById("d-rm").addEventListener("click",clearPhoto);
+  dFile.addEventListener("change",function(){
+    var f=dFile.files&&dFile.files[0]; if(!f) return;
+    var btn=document.getElementById("d-pick-btn"); btn.textContent="写真を準備中…";
+    var url=URL.createObjectURL(f), img=new Image();
+    img.onload=function(){
+      var MAX=1600, w=img.naturalWidth, h=img.naturalHeight, r=Math.min(1,MAX/Math.max(w,h));
+      var c=document.createElement("canvas"); c.width=Math.round(w*r); c.height=Math.round(h*r);
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+      URL.revokeObjectURL(url);
+      var data=c.toDataURL("image/jpeg",0.82);
+      dPhoto={b64:data.split(",")[1],type:"image/jpeg",url:data};
+      document.getElementById("d-prev-img").src=data;
+      document.getElementById("d-prev").classList.add("show");
+      document.getElementById("d-pick").style.display="none";
+      btn.textContent="📷 写真をえらぶ";
+    };
+    img.onerror=function(){ URL.revokeObjectURL(url); btn.textContent="📷 写真をえらぶ"; clearPhoto(); toast("この写真は読み込めませんでした"); };
+    img.src=url;
+  });
   document.getElementById("d-cancel").addEventListener("click",closeDiaryModal);
   dModal.addEventListener("click",function(e){ if(e.target===dModal) closeDiaryModal(); });
   document.getElementById("d-body").addEventListener("input",function(){ lsSet("fs8k2-draft",this.value); });
@@ -597,12 +652,14 @@
     var body=document.getElementById("d-body").value.trim();
     var date=(document.getElementById("d-date").value||today()).replace(/-/g,"/");
     var msgEl=document.getElementById("d-msg");
-    if(!body && !title){ msgEl.textContent="なにか一言でも書いてね。"; msgEl.classList.add("show"); return; }
-    var btn=this; btn.disabled=true; btn.textContent="残しています…"; msgEl.classList.remove("show");
+    if(!body && !title && !dPhoto){ msgEl.textContent="なにか一言か、写真を1枚どうぞ。"; msgEl.classList.add("show"); return; }
+    var btn=this; btn.disabled=true; btn.textContent=dPhoto?"写真を送っています…":"残しています…"; msgEl.classList.remove("show");
+    var sentPhoto=dPhoto;
     fetch(GAS_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body:JSON.stringify({token:TOKEN,action:"diary_add",date:date,person:dWho,title:title,body:body})})
+      body:JSON.stringify({token:TOKEN,action:"diary_add",date:date,person:dWho,title:title,body:body,photo:sentPhoto?sentPhoto.b64:"",photoType:sentPhoto?sentPhoto.type:""})})
     .then(function(r){return r.json();})
     .then(function(j){ if(!j.ok) throw new Error(j.error||"error");
+      if(sentPhoto) j.entry.localPhoto=sentPhoto.url; // ドライブ側の縮小画像ができるまで手元の写真を表示
       diary.push(j.entry); diaryLoaded=true; diaryOpen=null; renderDiary();
       lsSet("fs8k2-draft",""); closeDiaryModal();
       btn.disabled=false; btn.textContent="日記に残す";
