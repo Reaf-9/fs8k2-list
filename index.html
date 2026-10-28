@@ -115,8 +115,8 @@
   @keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
   @media (prefers-reduced-motion: reduce){.dots::after{animation:none;content:"…"}}
 
-  #toast{position:fixed;left:50%;bottom:84px;transform:translate(-50%,80px);background:var(--ink);color:#fff;font-size:14px;font-weight:700;padding:12px 22px;border-radius:99px;box-shadow:0 6px 20px rgba(46,49,72,.35);transition:transform .35s cubic-bezier(.22,1,.36,1);white-space:nowrap;z-index:30}
-  #toast.show{transform:translate(-50%,0)}
+  #toast{position:fixed;left:50%;bottom:84px;transform:translate(-50%,160px);opacity:0;background:var(--ink);color:#fff;font-size:14px;font-weight:700;padding:12px 22px;border-radius:99px;box-shadow:0 6px 20px rgba(46,49,72,.35);transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .25s;white-space:nowrap;z-index:30;pointer-events:none}
+  #toast.show{transform:translate(-50%,0);opacity:1}
 
 
   /* ===== タブ ===== */
