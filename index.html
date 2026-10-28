@@ -531,10 +531,17 @@
     });
   }
 
+  // 写真欄はIDでも共有リンクでもOK（…/file/d/ID/view、…open?id=ID など）
+  function driveId(v){
+    v=String(v||"").trim(); if(!v) return "";
+    var m=v.match(/\/d\/([\w-]{10,})/)||v.match(/[?&]id=([\w-]{10,})/);
+    if(m) return m[1];
+    return /^[\w-]{10,}$/.test(v)?v:"";
+  }
   function photoSrc(e,w){
     if(e.localPhoto) return e.localPhoto;
-    if(!e.photo || !/^[\w-]{10,}$/.test(e.photo)) return "";
-    return "https://drive.google.com/thumbnail?id="+encodeURIComponent(e.photo)+"&sz=w"+w;
+    var id=driveId(e.photo); if(!id) return "";
+    return "https://drive.google.com/thumbnail?id="+encodeURIComponent(id)+"&sz=w"+w;
   }
   var lb=document.getElementById("lightbox");
   lb.addEventListener("click",function(){ lb.classList.remove("show"); document.getElementById("lb-img").src=""; });
