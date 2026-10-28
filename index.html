@@ -118,6 +118,47 @@
   #toast{position:fixed;left:50%;bottom:84px;transform:translate(-50%,80px);background:var(--ink);color:#fff;font-size:14px;font-weight:700;padding:12px 22px;border-radius:99px;box-shadow:0 6px 20px rgba(46,49,72,.35);transition:transform .35s cubic-bezier(.22,1,.36,1);white-space:nowrap;z-index:30}
   #toast.show{transform:translate(-50%,0)}
 
+
+  /* ===== タブ ===== */
+  .tabs{display:flex;background:#fff;border:1.5px solid var(--line);border-radius:99px;padding:4px;margin:22px auto 0;max-width:340px}
+  .tab{flex:1;font-family:inherit;font-size:14px;font-weight:700;letter-spacing:.04em;padding:9px 10px;border:none;border-radius:99px;background:none;color:var(--ink-soft);cursor:pointer;transition:all .2s ease}
+  .tab[aria-selected="true"]{background:var(--ink);color:#fff}
+  .tab:focus-visible{outline:3px solid var(--spark);outline-offset:2px}
+
+  /* ===== 日記 ===== */
+  .diary-intro{text-align:center;margin:28px 0 6px}
+  .diary-intro .big{font-family:"Kaisei Decol",serif;font-size:19px;letter-spacing:.05em}
+  .diary-intro .big b{font-size:30px;color:var(--oto);padding:0 2px}
+  .diary-intro .sub{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+  .month-head{font-family:"Kaisei Decol",serif;font-size:15px;letter-spacing:.1em;color:var(--oto);margin:28px 0 12px;display:flex;align-items:center;gap:10px}
+  .month-head::after{content:"";flex:1;height:1.5px;background:linear-gradient(90deg,#EBC7D1,transparent)}
+  .dcard{position:relative;background:#fff;border:1.5px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex}
+  .dcard .stampcol{flex:none;width:64px;text-align:center;padding:14px 0 10px;border-right:1.5px dashed #EBC7D1;background:linear-gradient(180deg,#FDF4F6,#fff)}
+  .dcard .day{font-family:"Kaisei Decol",serif;font-size:26px;font-weight:700;line-height:1.1;color:var(--ink)}
+  .dcard .wd{font-size:11px;font-weight:700;color:var(--ink-soft);letter-spacing:.1em}
+  .dcard .wd.sun{color:#C0504D}.dcard .wd.sat{color:#4A6FA5}
+  .dcard .dbody{flex:1;min-width:0;padding:13px 15px 14px}
+  .dcard .dmeta{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .dcard .dmeta .badge{margin-top:0}
+  .dcard .dtitle{font-size:15.5px;font-weight:700;line-height:1.5;letter-spacing:.02em;word-break:break-word}
+  .dcard .dtext{font-size:14px;line-height:1.85;color:#3D4060;white-space:pre-wrap;word-break:break-word;margin-top:4px}
+  .dcard.clamp .dtext{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+  .dcard .more{font-family:inherit;font-size:12.5px;font-weight:700;color:var(--oto);background:none;border:none;padding:4px 0 0;cursor:pointer}
+  .dcard .dfoot{display:none;justify-content:space-between;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid #F1EBDF;font-size:11.5px;color:#A8A390}
+  .dcard.open .dfoot{display:flex}
+  .del-btn{font-family:inherit;font-size:12px;color:#A8A390;background:none;border:1px solid var(--line);border-radius:99px;padding:4px 12px;cursor:pointer}
+  .del-btn.armed{color:#fff;background:#C0504D;border-color:#C0504D}
+  .dcard-tap{position:absolute;inset:0;background:none;border:none;cursor:pointer;z-index:1}
+  .dcard .more,.dcard .del-btn{position:relative;z-index:2}
+  .dlist{list-style:none;display:flex;flex-direction:column;gap:12px}
+
+  #add-fab.diary{background:linear-gradient(135deg,var(--oto),#B04F6A);box-shadow:0 6px 18px rgba(176,79,106,.4)}
+  #diary-modal{position:fixed;inset:0;background:rgba(46,49,72,.4);display:none;align-items:flex-end;justify-content:center;z-index:20}
+  #diary-modal.show{display:flex}
+  #diary-modal .modal-card{max-height:92vh;overflow-y:auto}
+  #d-body{min-height:150px}
+  .modal-card .send.oto{background:linear-gradient(135deg,var(--oto),#B04F6A)}
+
   footer{margin-top:44px;text-align:center;font-size:11.5px;color:#A8A390;line-height:1.9}
 </style>
 </head>
@@ -126,7 +167,11 @@
     <header>
       <p class="eyebrow">MASAHIRO ✕ SHIZUNE</p>
       <h1>ふたりの<br>やりたいこと<span class="ha">リ</span><span class="oto">ス</span>ト</h1>
-      <p class="subnote">タップで くわしく／下の＋で 追加できるよ</p>
+      <p class="subnote">タップで くわしく／下のボタンで 追加できるよ</p>
+      <div class="tabs" role="tablist" aria-label="表示の切り替え">
+        <button class="tab" role="tab" id="tab-list" data-tab="list" aria-selected="true">やりたいこと</button>
+        <button class="tab" role="tab" id="tab-diary" data-tab="diary" aria-selected="false">ふたりの日記 📖</button>
+      </div>
     </header>
 
     <div id="loading" class="dots">リストをひらいています</div>
@@ -136,6 +181,7 @@
     </div>
 
     <div id="app" style="display:none">
+     <div id="panel-list">
       <div class="senko" aria-hidden="true"><div class="wire"></div><div class="tama"></div></div>
       <p class="progress-label">やりたいこと <b id="pct">0</b>% 達成</p>
       <p class="progress-sub" id="count"></p>
@@ -153,6 +199,17 @@
       <h2 class="section-head done-head">叶えたリスト 🎆 <span class="n" id="done-n"></span></h2>
       <ul class="list" id="done-list"></ul>
       <p class="empty" id="done-empty" style="display:none">最初のひとつを、これから作りにいこ。</p>
+     </div>
+
+     <div id="panel-diary" style="display:none">
+      <div class="diary-intro">
+        <p class="big">ふたりの日記 <b id="diary-n">0</b> ページ</p>
+        <p class="sub" id="diary-sub">急なイベントも、残しておきたい日も。</p>
+      </div>
+      <div id="diary-loading" class="empty dots">日記をひらいています</div>
+      <div id="diary-list"></div>
+      <p class="empty" id="diary-empty" style="display:none">まだ白紙のノートです。<br>下の「日記を書く」から最初の1ページをどうぞ。</p>
+     </div>
     </div>
 
     <footer>
@@ -186,6 +243,31 @@
     </div>
   </div>
 
+
+  <div id="diary-modal" role="dialog" aria-modal="true" aria-label="日記を書く">
+    <div class="modal-card">
+      <h3>日記 を書く 📖</h3>
+      <div class="form show">
+        <div><label for="d-date">いつのこと？</label><input type="date" id="d-date"></div>
+        <div>
+          <label>だれが書く？</label>
+          <div class="who" id="d-who">
+            <button type="button" data-p="マサヒロ">マサヒロ</button>
+            <button type="button" data-p="静音" aria-pressed="true">静音</button>
+            <button type="button" data-p="ふたり">ふたり</button>
+          </div>
+        </div>
+        <div><label for="d-title">タイトル（任意）</label><input type="text" id="d-title" placeholder="例：急遽、夜の海へドライブ" maxlength="60"></div>
+        <div><label for="d-body">本文</label><textarea id="d-body" placeholder="なにがあった？どう思った？"></textarea></div>
+        <p class="form-msg" id="d-msg"></p>
+        <div class="form-btns">
+          <button class="send oto" id="d-send">日記に残す</button>
+          <button class="cancel" id="d-cancel">とじる</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" aria-live="polite"></div>
 
 <script>
@@ -196,7 +278,8 @@
   var TOKEN    = "fs8k2-hana-0822";
   /* ================================================ */
 
-  var CSV_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv&headers=0&t=";
+  var CSV_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv&headers=0&sheet=" + encodeURIComponent("タスク") + "&t=";
+  var DIARY_CSV = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv&headers=0&sheet=" + encodeURIComponent("日記") + "&t=";
   var COL = {check:0, person:1, item:2, memo:3, date:4, omoide:5};
   var EXTRA_START = 6;
 
@@ -244,6 +327,7 @@
     document.getElementById("loading").style.display="none";
     document.getElementById("app").style.display="block";
     document.getElementById("add-fab").style.display="block";
+    setTab(startTab);
   }
 
   function refreshHeader(){
@@ -353,7 +437,7 @@
     setTimeout(function(){document.getElementById("add-item").focus();},100);
   }
   function closeModal(){modal.classList.remove("show");}
-  document.getElementById("add-fab").addEventListener("click",openModal);
+  document.getElementById("add-fab").addEventListener("click",function(){ if(currentTab==="diary") openDiaryModal(); else openModal(); });
   document.getElementById("add-cancel").addEventListener("click",closeModal);
   modal.addEventListener("click",function(e){if(e.target===modal)closeModal();});
   document.querySelectorAll("#add-who button").forEach(function(b){
@@ -380,6 +464,154 @@
     .catch(function(){btn.disabled=false;btn.textContent="追加する";
       msgEl.textContent="うまく追加できませんでした。もう一度どうぞ。";msgEl.classList.add("show");});
   });
+
+
+  /* ===================== 日記 ===================== */
+  var diary=[], diaryLoaded=false, diaryOpen=null, armedDel=null, currentTab="list", dWho="静音";
+  var WD=["日","月","火","水","木","金","土"];
+  function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+  function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+
+  function parseD(s){
+    var m=String(s||"").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
+    if(!m) return null;
+    return new Date(+m[1],+m[2]-1,+m[3]);
+  }
+
+  function loadDiary(){
+    fetch(DIARY_CSV+Date.now()).then(function(r){if(!r.ok)throw new Error(r.status);return r.text();})
+    .then(function(t){
+      var rows=parseCSV(t), hr=-1;
+      for(var i=0;i<rows.length;i++){ if(rows[i].indexOf("本文")>-1 && rows[i].indexOf("書いた人")>-1){hr=i;break;} }
+      diary=[];
+      if(hr>-1){  // 日記シートがまだ無い場合、gvizは別シートを返すので見出しで判定
+        var H=rows[hr], ix=function(n){return H.indexOf(n);};
+        var cD=ix("日付"),cP=ix("書いた人"),cT=ix("タイトル"),cB=ix("本文"),cC=ix("記録日時"),cI=ix("ID");
+        for(var r=hr+1;r<rows.length;r++){
+          var row=rows[r], body=(row[cB]||"").trim(), title=(row[cT]||"").trim();
+          if(!body && !title) continue;
+          diary.push({date:(row[cD]||"").trim(),person:(row[cP]||"").trim(),title:title,body:body,
+            created:(row[cC]||"").trim(),id:(row[cI]||"").trim()});
+        }
+      }
+      diaryLoaded=true; renderDiary();
+    })
+    .catch(function(){
+      document.getElementById("diary-loading").textContent="日記を読み込めませんでした。開き直してみてください。";
+    });
+  }
+
+  function sortDiary(){
+    diary.sort(function(a,b){
+      var da=parseD(a.date), db=parseD(b.date);
+      var ta=da?da.getTime():0, tb=db?db.getTime():0;
+      if(tb!==ta) return tb-ta;
+      return (b.created||"").localeCompare(a.created||"");
+    });
+  }
+
+  function dcardHTML(e,i){
+    var d=parseD(e.date), cls=personClass(e.person), key="d"+i;
+    var open=diaryOpen===key, long=e.body.length>110 || (e.body.match(/\n/g)||[]).length>4;
+    var wd=d?WD[d.getDay()]:"", wdc=d&&d.getDay()===0?" sun":(d&&d.getDay()===6?" sat":"");
+    var h='<li class="dcard'+(long&&!open?' clamp':'')+(open?' open':'')+'" id="dc-'+key+'">';
+    h+='<button class="dcard-tap" data-dact="toggle" data-k="'+key+'" aria-label="この日記を開く"></button>';
+    h+='<div class="stampcol"><div class="day">'+(d?d.getDate():"—")+'</div><div class="wd'+wdc+'">'+(wd?wd+"曜":"")+'</div></div>';
+    h+='<div class="dbody"><div class="dmeta"><span class="badge '+cls+'">'+esc(e.person||"ふたり")+'</span></div>';
+    if(e.title) h+='<div class="dtitle">'+esc(e.title)+'</div>';
+    if(e.body) h+='<div class="dtext">'+esc(e.body)+'</div>';
+    if(long && !open) h+='<button class="more" data-dact="toggle" data-k="'+key+'">続きを読む</button>';
+    h+='<div class="dfoot"><span>'+(e.created?esc(e.created)+" に記録":"")+'</span>';
+    if(e.id) h+='<button class="del-btn'+(armedDel===key?' armed':'')+'" data-dact="del" data-k="'+key+'">'+(armedDel===key?'本当に消す？':'この日記を消す')+'</button>';
+    h+='</div></div></li>';
+    return h;
+  }
+
+  function renderDiary(){
+    document.getElementById("diary-loading").style.display="none";
+    sortDiary();
+    document.getElementById("diary-n").textContent=diary.length;
+    var html="", curM="", open=false;
+    diary.forEach(function(e,i){
+      var d=parseD(e.date), m=d?(d.getFullYear()+"年"+(d.getMonth()+1)+"月"):"日付なし";
+      if(m!==curM){ if(open) html+='</ul>'; html+='<h3 class="month-head">'+m+'</h3><ul class="dlist">'; curM=m; open=true; }
+      html+=dcardHTML(e,i);
+    });
+    if(open) html+='</ul>';
+    document.getElementById("diary-list").innerHTML=html;
+    document.getElementById("diary-empty").style.display=diary.length?"none":"block";
+  }
+
+  document.addEventListener("click",function(ev){
+    var el=ev.target.closest("[data-dact]"); if(!el) return;
+    var key=el.dataset.k, i=+key.slice(1), e=diary[i]; if(!e) return;
+    if(el.dataset.dact==="toggle"){ diaryOpen=(diaryOpen===key)?null:key; armedDel=null; renderDiary(); return; }
+    if(el.dataset.dact==="del"){
+      if(armedDel!==key){ armedDel=key; renderDiary(); return; }
+      el.disabled=true; el.textContent="消しています…";
+      fetch(GAS_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
+        body:JSON.stringify({token:TOKEN,action:"diary_delete",id:e.id})})
+      .then(function(r){return r.json();})
+      .then(function(j){ if(!j.ok) throw new Error(j.error||"error");
+        diary.splice(i,1); diaryOpen=null; armedDel=null; renderDiary(); toast("日記を1ページ消しました"); })
+      .catch(function(){ armedDel=null; renderDiary(); toast("消せませんでした。もう一度どうぞ"); });
+    }
+  });
+
+  /* ---- タブ切り替え ---- */
+  function setTab(t){
+    currentTab=t;
+    document.getElementById("tab-list").setAttribute("aria-selected",t==="list"?"true":"false");
+    document.getElementById("tab-diary").setAttribute("aria-selected",t==="diary"?"true":"false");
+    document.getElementById("panel-list").style.display=t==="list"?"block":"none";
+    document.getElementById("panel-diary").style.display=t==="diary"?"block":"none";
+    var fab=document.getElementById("add-fab");
+    fab.textContent= t==="diary" ? "日記を書く" : "やりたいことを追加";
+    fab.classList.toggle("diary", t==="diary");
+    lsSet("fs8k2-tab",t);
+    if(t==="diary" && !diaryLoaded) loadDiary();
+  }
+  document.querySelectorAll(".tab").forEach(function(b){ b.addEventListener("click",function(){ setTab(b.dataset.tab); window.scrollTo(0,0); }); });
+
+  /* ---- 日記モーダル ---- */
+  var dModal=document.getElementById("diary-modal");
+  var savedWho=lsGet("fs8k2-who"); if(savedWho) dWho=savedWho;
+  function syncWho(){ document.querySelectorAll("#d-who button").forEach(function(x){x.setAttribute("aria-pressed",x.dataset.p===dWho?"true":"false");}); }
+  function openDiaryModal(){
+    document.getElementById("d-date").value=today();
+    document.getElementById("d-title").value="";
+    document.getElementById("d-body").value=lsGet("fs8k2-draft")||"";
+    document.getElementById("d-msg").classList.remove("show");
+    syncWho(); dModal.classList.add("show");
+    setTimeout(function(){document.getElementById("d-body").focus();},120);
+  }
+  function closeDiaryModal(){ dModal.classList.remove("show"); }
+  document.getElementById("d-cancel").addEventListener("click",closeDiaryModal);
+  dModal.addEventListener("click",function(e){ if(e.target===dModal) closeDiaryModal(); });
+  document.getElementById("d-body").addEventListener("input",function(){ lsSet("fs8k2-draft",this.value); });
+  document.querySelectorAll("#d-who button").forEach(function(b){
+    b.addEventListener("click",function(){ dWho=b.dataset.p; lsSet("fs8k2-who",dWho); syncWho(); });
+  });
+  document.getElementById("d-send").addEventListener("click",function(){
+    var title=document.getElementById("d-title").value.trim();
+    var body=document.getElementById("d-body").value.trim();
+    var date=(document.getElementById("d-date").value||today()).replace(/-/g,"/");
+    var msgEl=document.getElementById("d-msg");
+    if(!body && !title){ msgEl.textContent="なにか一言でも書いてね。"; msgEl.classList.add("show"); return; }
+    var btn=this; btn.disabled=true; btn.textContent="残しています…"; msgEl.classList.remove("show");
+    fetch(GAS_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({token:TOKEN,action:"diary_add",date:date,person:dWho,title:title,body:body})})
+    .then(function(r){return r.json();})
+    .then(function(j){ if(!j.ok) throw new Error(j.error||"error");
+      diary.push(j.entry); diaryLoaded=true; diaryOpen=null; renderDiary();
+      lsSet("fs8k2-draft",""); closeDiaryModal();
+      btn.disabled=false; btn.textContent="日記に残す";
+      toast("📖 日記に1ページ増えました"); })
+    .catch(function(){ btn.disabled=false; btn.textContent="日記に残す";
+      msgEl.textContent="うまく残せませんでした。書いた内容は消えていないので、もう一度どうぞ。"; msgEl.classList.add("show"); });
+  });
+
+  var startTab = location.hash==="#diary" ? "diary" : (lsGet("fs8k2-tab")||"list");
 
   function showError(){document.getElementById("loading").style.display="none";document.getElementById("error").style.display="block";}
   fetch(CSV_URL+Date.now()).then(function(r){if(!r.ok)throw new Error(r.status);return r.text();})
