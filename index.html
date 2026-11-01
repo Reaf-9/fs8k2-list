@@ -181,6 +181,64 @@
   .app-name{font-size:11px;font-weight:700;line-height:1.3;text-align:center;letter-spacing:.01em;max-width:100%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .app.soon .app-icon::after{content:"準備中";position:absolute;left:50%;bottom:6%;transform:translateX(-50%);font-size:9px;font-weight:700;color:#fff;background:rgba(46,49,72,.72);padding:1px 7px;border-radius:99px;white-space:nowrap}
   .play-note{text-align:center;font-size:11.5px;color:var(--ink-soft);margin-top:14px}
+  /* ===== 日記：表示切替 ===== */
+  .dview{display:flex;justify-content:center;gap:6px;margin:14px 0 4px}
+  .dview button{font-family:inherit;font-size:12.5px;font-weight:700;padding:6px 14px;border-radius:99px;border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer}
+  .dview button[aria-pressed="true"]{background:var(--oto);border-color:var(--oto);color:#fff}
+
+  /* ===== 日記：カレンダー ===== */
+  .cal-month{margin:26px 0 8px}
+  .cal-title{font-family:"Kaisei Decol",serif;font-size:17px;font-weight:700;letter-spacing:.08em;text-align:center;margin-bottom:12px}
+  .cal-wd,.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+  .cal-wd span{text-align:center;font-size:12px;font-weight:700;color:var(--ink-soft);padding-bottom:6px}
+  .cal-wd .sun{color:#C0504D}.cal-wd .sat{color:#4A6FA5}
+  .cal-grid{row-gap:6px}
+  .cal-cell{display:flex;align-items:center;justify-content:center;aspect-ratio:1}
+  .cal-num{font-family:"Kaisei Decol",serif;font-size:17px;font-weight:700;color:#B8B3A6}
+  .cal-cell.today .cal-num{color:var(--ink);border-bottom:2.5px solid var(--oto);line-height:1.3}
+  .cal-day{position:relative;width:88%;max-width:52px;aspect-ratio:1;border-radius:50%;border:none;padding:0;cursor:pointer;overflow:visible;background:#ddd;box-shadow:0 2px 8px rgba(46,49,72,.18);display:flex;align-items:center;justify-content:center;font-family:inherit;transition:transform .15s ease}
+  .cal-day:active{transform:scale(.92)}
+  .cal-day:focus-visible{outline:3px solid var(--spark);outline-offset:2px}
+  .cal-day .bg{position:absolute;inset:0;border-radius:50%;overflow:hidden}
+  .cal-day .bg img{width:100%;height:100%;object-fit:cover;display:block}
+  .cal-day .bg::after{content:"";position:absolute;inset:0;background:rgba(30,32,48,.28)}
+  .cal-day.masa .bg{background:linear-gradient(135deg,#9CC992,var(--leaf))}
+  .cal-day.shizu .bg{background:linear-gradient(135deg,#F0A6BA,var(--oto))}
+  .cal-day.both .bg{background:linear-gradient(135deg,#F7C77E,var(--spark-deep))}
+  .cal-day .n{position:relative;font-family:"Kaisei Decol",serif;font-size:18px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.45)}
+  .cal-day .cnt{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;border-radius:9px;background:var(--ink);color:#fff;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--paper)}
+  .cal-day .rep{position:absolute;bottom:-3px;right:-3px;width:18px;height:18px;border-radius:50%;background:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--line)}
+
+  /* ===== 日記：その日のシート ===== */
+  #day-modal{position:fixed;inset:0;background:rgba(46,49,72,.4);display:none;align-items:flex-end;justify-content:center;z-index:20}
+  #day-modal.show{display:flex}
+  #day-modal .modal-card{max-height:90vh;overflow-y:auto;padding-top:18px}
+  .day-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .day-head h3{margin:0;font-family:"Kaisei Decol",serif;font-size:18px;letter-spacing:.05em}
+  .day-x{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);font-size:15px;cursor:pointer}
+  .day-more{margin-top:14px;width:100%;font-family:inherit;font-size:13.5px;font-weight:700;color:var(--oto);background:#fff;border:1.5px dashed #E3B4C2;border-radius:14px;padding:11px;cursor:pointer}
+
+  /* ===== 返事 ===== */
+  .replies{position:relative;z-index:2;margin-top:12px;padding-top:10px;border-top:1px solid #F1EBDF}
+  .replies-h{font-size:11.5px;font-weight:700;color:var(--ink-soft);letter-spacing:.08em;margin-bottom:8px}
+  .reply{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px}
+  .reply .badge{margin-top:2px;font-size:10.5px;padding:2px 8px}
+  .reply .bubble{flex:1;min-width:0;background:#F7F2E9;border-radius:4px 14px 14px 14px;padding:7px 11px;font-size:13.5px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
+  .reply.shizu .bubble{background:#FBEFF2}
+  .reply.masa .bubble{background:#EEF5EB}
+  .reply .rmeta{display:flex;justify-content:space-between;align-items:center;font-size:10.5px;color:#A8A390;margin-top:2px}
+  .rdel{font-family:inherit;font-size:10.5px;color:#A8A390;background:none;border:none;cursor:pointer;padding:0 0 0 8px}
+  .rdel.armed{color:#C0504D;font-weight:700}
+  .rform{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+  .rwho{display:flex;gap:6px}
+  .rwho button{font-family:inherit;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:99px;border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer}
+  .rwho button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+  .rrow{display:flex;gap:6px}
+  .rrow input{flex:1;min-width:0;font-family:inherit;font-size:15px;padding:9px 12px;border:1.5px solid var(--line);border-radius:99px;background:#fff;color:var(--ink)}
+  .rrow input:focus{outline:2px solid var(--spark)}
+  .rsend{font-family:inherit;font-size:13.5px;font-weight:700;padding:0 16px;border-radius:99px;border:none;background:linear-gradient(135deg,var(--oto),#B04F6A);color:#fff;cursor:pointer}
+  .rsend:disabled{opacity:.6}
+  .rchip{font-size:11px;font-weight:700;color:var(--ink-soft);background:#F3EEE4;border-radius:99px;padding:2px 8px}
   #add-fab.diary{background:linear-gradient(135deg,var(--oto),#B04F6A);box-shadow:0 6px 18px rgba(176,79,106,.4)}
   #diary-modal{position:fixed;inset:0;background:rgba(46,49,72,.4);display:none;align-items:flex-end;justify-content:center;z-index:20}
   #diary-modal.show{display:flex}
@@ -235,6 +293,10 @@
       <div class="diary-intro">
         <p class="big">ふたりの日記 <b id="diary-n">0</b> ページ</p>
         <p class="sub" id="diary-sub">急なイベントも、残しておきたい日も。</p>
+        <div class="dview" role="group" aria-label="日記の見せ方">
+          <button type="button" data-view="cal" aria-pressed="true">📅 カレンダー</button>
+          <button type="button" data-view="list" aria-pressed="false">📖 ならべる</button>
+        </div>
       </div>
       <div id="diary-loading" class="empty dots">日記をひらいています</div>
       <div id="diary-list"></div>
@@ -313,6 +375,13 @@
     </div>
   </div>
 
+  <div id="day-modal" role="dialog" aria-modal="true" aria-label="この日の日記">
+    <div class="modal-card">
+      <div class="day-head"><h3 id="day-title"></h3><button class="day-x" id="day-x" aria-label="とじる">✕</button></div>
+      <ul class="dlist" id="day-list"></ul>
+      <button class="day-more" id="day-more">＋ この日の日記をもう1ページ書く</button>
+    </div>
+  </div>
   <div id="lightbox" role="dialog" aria-label="写真"><img id="lb-img" alt=""></div>
   <div id="toast" aria-live="polite"></div>
 
@@ -513,7 +582,8 @@
 
 
   /* ===================== 日記 ===================== */
-  var diary=[], diaryLoaded=false, diaryOpen=null, armedDel=null, currentTab="list", dWho="静音";
+  var diary=[], comments=[], diaryLoaded=false, diaryOpen=null, armedDel=null, armedRep=null, currentTab="list", dWho="静音", dayOpen=null;
+  var COMMENT_CSV = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv&headers=0&sheet=" + encodeURIComponent("コメント") + "&t=";
   var WD=["日","月","火","水","木","金","土"];
   function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
   function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
@@ -545,7 +615,27 @@
     .catch(function(){
       document.getElementById("diary-loading").textContent="日記を読み込めませんでした。開き直してみてください。";
     });
+    loadComments();
   }
+
+  function loadComments(){
+    fetch(COMMENT_CSV+Date.now()).then(function(r){if(!r.ok)throw new Error(r.status);return r.text();})
+    .then(function(t){
+      var rows=parseCSV(t), hr=-1;
+      for(var i=0;i<rows.length;i++){ if(rows[i].indexOf("日記ID")>-1 && rows[i].indexOf("コメント")>-1){hr=i;break;} }
+      comments=[];
+      if(hr>-1){  // コメントシートがまだ無いと gviz は別シートを返すので見出しで判定
+        var H=rows[hr], ix=function(n){return H.indexOf(n);};
+        var cD=ix("日記ID"),cP=ix("書いた人"),cT=ix("コメント"),cC=ix("記録日時"),cI=ix("ID");
+        for(var r=hr+1;r<rows.length;r++){
+          var row=rows[r], text=(row[cT]||"").trim(); if(!text) continue;
+          comments.push({did:(row[cD]||"").trim(),person:(row[cP]||"").trim(),text:text,created:(row[cC]||"").trim(),id:(row[cI]||"").trim()});
+        }
+      }
+      if(diaryLoaded) rerenderDiary();
+    }).catch(function(){});
+  }
+  function repliesOf(e){ return e.id ? comments.filter(function(c){return c.did===e.id;}).sort(function(a,b){return (a.created||"").localeCompare(b.created||"");}) : []; }
 
   function sortDiary(){
     diary.sort(function(a,b){
@@ -570,29 +660,88 @@
   }
   var lb=document.getElementById("lightbox");
   lb.addEventListener("click",function(){ lb.classList.remove("show"); document.getElementById("lb-img").src=""; });
-  function dcardHTML(e,i){
+  function repliesHTML(e,key){
+    var reps=repliesOf(e), h='<div class="replies">';
+    h+='<div class="replies-h">💬 返事'+(reps.length?'（'+reps.length+'）':'')+'</div>';
+    reps.forEach(function(c){
+      var cc=personClass(c.person), armed=armedRep===c.id;
+      h+='<div class="reply '+cc+'"><span class="badge '+cc+'">'+esc(c.person||"ふたり")+'</span><div style="flex:1;min-width:0"><div class="bubble">'+esc(c.text)+'</div>';
+      h+='<div class="rmeta"><span>'+esc(c.created||"")+'</span>'+(c.id?'<button class="rdel'+(armed?' armed':'')+'" data-dact="rdel" data-k="'+key+'" data-r="'+esc(c.id)+'">'+(armed?'本当に消す？':'消す')+'</button>':'')+'</div></div></div>';
+    });
+    if(e.id){
+      h+='<div class="rform"><div class="rwho">';
+      ["マサヒロ","静音"].forEach(function(p){ h+='<button type="button" data-dact="rwho" data-k="'+key+'" data-p="'+p+'" aria-pressed="'+(dWho===p?'true':'false')+'">'+p+'</button>'; });
+      h+='</div><div class="rrow"><input type="text" id="rin-'+key+'" maxlength="200" placeholder="ひとこと返す…" enterkeyhint="send"><button class="rsend" data-dact="rsend" data-k="'+key+'">送る</button></div></div>';
+    }
+    return h+'</div>';
+  }
+
+  function dcardHTML(e,i,inSheet){
     var d=parseD(e.date), cls=personClass(e.person), key="d"+i;
-    var open=diaryOpen===key, long=e.body.length>110 || (e.body.match(/\n/g)||[]).length>4;
+    var open=inSheet||diaryOpen===key, long=e.body.length>110 || (e.body.match(/\n/g)||[]).length>4;
     var wd=d?WD[d.getDay()]:"", wdc=d&&d.getDay()===0?" sun":(d&&d.getDay()===6?" sat":"");
-    var h='<li class="dcard'+(long&&!open?' clamp':'')+(open?' open':'')+'" id="dc-'+key+'">';
-    h+='<button class="dcard-tap" data-dact="toggle" data-k="'+key+'" aria-label="この日記を開く"></button>';
+    var h='<li class="dcard'+(long&&!open?' clamp':'')+(open?' open':'')+'" id="'+(inSheet?'ds-':'dc-')+key+'">';
+    if(!inSheet) h+='<button class="dcard-tap" data-dact="toggle" data-k="'+key+'" aria-label="この日記を開く"></button>';
     h+='<div class="stampcol"><div class="day">'+(d?d.getDate():"—")+'</div><div class="wd'+wdc+'">'+(wd?wd+"曜":"")+'</div></div>';
-    h+='<div class="dbody"><div class="dmeta"><span class="badge '+cls+'">'+esc(e.person||"ふたり")+'</span></div>';
+    var nrep=repliesOf(e).length;
+    h+='<div class="dbody"><div class="dmeta"><span class="badge '+cls+'">'+esc(e.person||"ふたり")+'</span>'+(nrep&&!open?'<span class="rchip">💬 '+nrep+'</span>':'')+'</div>';
     var psrc=photoSrc(e, open?1600:900);
     if(psrc) h+='<button class="dphoto" data-dact="photo" data-k="'+key+'" aria-label="写真を大きく見る"><img src="'+esc(psrc)+'" alt="" loading="lazy"></button>';
     if(e.title) h+='<div class="dtitle">'+esc(e.title)+'</div>';
     if(e.body) h+='<div class="dtext">'+esc(e.body)+'</div>';
     if(long && !open) h+='<button class="more" data-dact="toggle" data-k="'+key+'">続きを読む</button>';
+    if(open) h+=repliesHTML(e,key);
     h+='<div class="dfoot"><span>'+(e.created?esc(e.created)+" に記録":"")+'</span>';
     if(e.id) h+='<button class="del-btn'+(armedDel===key?' armed':'')+'" data-dact="del" data-k="'+key+'">'+(armedDel===key?'本当に消す？':'この日記を消す')+'</button>';
     h+='</div></div></li>';
     return h;
   }
 
+  var dView=lsGet("fs8k2-dview")||"cal";
+  function dkey(d){ return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+  function calendarHTML(){
+    var byDay={}, minM=null, now=new Date();
+    diary.forEach(function(e,i){ var d=parseD(e.date); if(!d) return; var k=dkey(d); (byDay[k]=byDay[k]||[]).push(i);
+      var m=new Date(d.getFullYear(),d.getMonth(),1); if(!minM||m<minM) minM=m; });
+    var cur=new Date(now.getFullYear(),now.getMonth(),1); if(!minM) minM=cur;
+    var lastEntryM=null; diary.forEach(function(e){var d=parseD(e.date); if(d){var m=new Date(d.getFullYear(),d.getMonth(),1); if(!lastEntryM||m>lastEntryM) lastEntryM=m;}});
+    if(lastEntryM&&lastEntryM>cur) cur=lastEntryM;
+    var html="", todayK=dkey(now);
+    for(var m=new Date(cur); m>=minM; m=new Date(m.getFullYear(),m.getMonth()-1,1)){
+      html+='<section class="cal-month"><h3 class="cal-title">'+m.getFullYear()+'年'+(m.getMonth()+1)+'月</h3>';
+      html+='<div class="cal-wd"><span class="sun">日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span class="sat">土</span></div><div class="cal-grid">';
+      for(var b=0;b<m.getDay();b++) html+='<div class="cal-cell"></div>';
+      var days=new Date(m.getFullYear(),m.getMonth()+1,0).getDate();
+      for(var dd=1;dd<=days;dd++){
+        var k=m.getFullYear()+"-"+(m.getMonth()+1)+"-"+dd, list=byDay[k];
+        if(list){
+          var first=diary[list[0]], src=photoSrc(first,240);
+          if(!src){ for(var x=1;x<list.length&&!src;x++) src=photoSrc(diary[list[x]],240); }
+          var hasRep=list.some(function(ix){return repliesOf(diary[ix]).length>0;});
+          html+='<div class="cal-cell"><button class="cal-day '+personClass(first.person)+'" data-day="'+k+'" aria-label="'+(m.getMonth()+1)+'月'+dd+'日の日記 '+list.length+'件">';
+          html+='<span class="bg">'+(src?'<img src="'+esc(src)+'" alt="" loading="lazy">':'')+'</span><span class="n">'+dd+'</span>';
+          if(list.length>1) html+='<span class="cnt">'+list.length+'</span>';
+          if(hasRep) html+='<span class="rep">💬</span>';
+          html+='</button></div>';
+        }else{
+          html+='<div class="cal-cell'+(k===todayK?' today':'')+'"><span class="cal-num">'+dd+'</span></div>';
+        }
+      }
+      html+='</div></section>';
+    }
+    return html;
+  }
+
   function renderDiary(){
     document.getElementById("diary-loading").style.display="none";
     sortDiary();
     document.getElementById("diary-n").textContent=diary.length;
+    document.querySelectorAll(".dview button").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.view===dView?"true":"false"); });
+    if(dView==="cal"){
+      document.getElementById("diary-list").innerHTML=calendarHTML();
+      document.getElementById("diary-empty").style.display=diary.length?"none":"block";
+      return;
+    }
     var html="", curM="", open=false;
     diary.forEach(function(e,i){
       var d=parseD(e.date), m=d?(d.getFullYear()+"年"+(d.getMonth()+1)+"月"):"日付なし";
@@ -604,20 +753,76 @@
     document.getElementById("diary-empty").style.display=diary.length?"none":"block";
   }
 
+  /* ---- その日のシート ---- */
+  var dayModal=document.getElementById("day-modal");
+  function renderDay(){
+    if(!dayOpen) return;
+    var p=dayOpen.split("-"), d=new Date(+p[0],+p[1]-1,+p[2]);
+    document.getElementById("day-title").textContent=(d.getMonth()+1)+"月"+d.getDate()+"日（"+WD[d.getDay()]+"）";
+    var parts=[];
+    diary.forEach(function(e,i){ var dd=parseD(e.date); if(dd&&dkey(dd)===dayOpen) parts.unshift(dcardHTML(e,i,true)); }); // その日の中は古い順
+    var html=parts.join("");
+    if(!html){ closeDay(); return; }
+    document.getElementById("day-list").innerHTML=html;
+  }
+  function openDay(k){ dayOpen=k; armedDel=null; armedRep=null; renderDay(); dayModal.classList.add("show"); dayModal.querySelector(".modal-card").scrollTop=0; }
+  function closeDay(){ dayOpen=null; dayModal.classList.remove("show"); }
+  function rerenderDiary(){ renderDiary(); renderDay(); }
+  document.getElementById("day-x").addEventListener("click",closeDay);
+  dayModal.addEventListener("click",function(e){ if(e.target===dayModal) closeDay(); });
+  document.getElementById("day-more").addEventListener("click",function(){
+    var p=dayOpen.split("-"); var v=p[0]+"-"+("0"+p[1]).slice(-2)+"-"+("0"+p[2]).slice(-2);
+    closeDay(); openDiaryModal(v);
+  });
+  document.getElementById("diary-list").addEventListener("click",function(e){
+    var b=e.target.closest(".cal-day"); if(b) openDay(b.dataset.day);
+  });
+  document.querySelectorAll(".dview button").forEach(function(b){
+    b.addEventListener("click",function(){ dView=b.dataset.view; lsSet("fs8k2-dview",dView); diaryOpen=null; renderDiary(); });
+  });
+  document.addEventListener("keydown",function(e){
+    if(e.key!=="Enter"||!e.target.id||e.target.id.indexOf("rin-")!==0||e.isComposing) return;
+    var btn=e.target.parentNode.querySelector(".rsend"); if(btn) btn.click();
+  });
+
   document.addEventListener("click",function(ev){
     var el=ev.target.closest("[data-dact]"); if(!el) return;
     var key=el.dataset.k, i=+key.slice(1), e=diary[i]; if(!e) return;
     if(el.dataset.dact==="photo"){ document.getElementById("lb-img").src=photoSrc(e,2000); lb.classList.add("show"); return; }
-    if(el.dataset.dact==="toggle"){ diaryOpen=(diaryOpen===key)?null:key; armedDel=null; renderDiary(); return; }
+    if(el.dataset.dact==="toggle"){ diaryOpen=(diaryOpen===key)?null:key; armedDel=null; armedRep=null; renderDiary(); return; }
+    if(el.dataset.dact==="rwho"){ dWho=el.dataset.p; lsSet("fs8k2-who",dWho);
+      el.parentNode.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",x===el?"true":"false");}); return; }
+    if(el.dataset.dact==="rsend"){
+      var inp=el.parentNode.querySelector("input"), text=(inp.value||"").trim(); if(!text){ inp.focus(); return; }
+      el.disabled=true; el.textContent="…";
+      fetch(GAS_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
+        body:JSON.stringify({token:TOKEN,action:"comment_add",did:e.id,person:dWho,text:text})})
+      .then(function(r){return r.json();})
+      .then(function(j){ if(!j.ok) throw new Error(j.error||"error"); comments.push(j.comment); rerenderDiary(); toast("💬 返事を送りました"); })
+      .catch(function(){ el.disabled=false; el.textContent="送る"; toast("送れませんでした。もう一度どうぞ"); });
+      return;
+    }
+    if(el.dataset.dact==="rdel"){
+      var rid=el.dataset.r;
+      if(armedRep!==rid){ armedRep=rid; rerenderDiary(); return; }
+      el.disabled=true; el.textContent="消しています…";
+      fetch(GAS_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
+        body:JSON.stringify({token:TOKEN,action:"comment_delete",id:rid})})
+      .then(function(r){return r.json();})
+      .then(function(j){ if(!j.ok) throw new Error(j.error||"error"); comments=comments.filter(function(c){return c.id!==rid;}); armedRep=null; rerenderDiary(); })
+      .catch(function(){ armedRep=null; rerenderDiary(); toast("消せませんでした。もう一度どうぞ"); });
+      return;
+    }
     if(el.dataset.dact==="del"){
-      if(armedDel!==key){ armedDel=key; renderDiary(); return; }
+      if(armedDel!==key){ armedDel=key; rerenderDiary(); return; }
       el.disabled=true; el.textContent="消しています…";
       fetch(GAS_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
         body:JSON.stringify({token:TOKEN,action:"diary_delete",id:e.id})})
       .then(function(r){return r.json();})
       .then(function(j){ if(!j.ok) throw new Error(j.error||"error");
-        diary.splice(i,1); diaryOpen=null; armedDel=null; renderDiary(); toast("日記を1ページ消しました"); })
-      .catch(function(){ armedDel=null; renderDiary(); toast("消せませんでした。もう一度どうぞ"); });
+        comments=comments.filter(function(c){return c.did!==e.id;});
+        diary.splice(i,1); diaryOpen=null; armedDel=null; rerenderDiary(); toast("日記を1ページ消しました"); })
+      .catch(function(){ armedDel=null; rerenderDiary(); toast("消せませんでした。もう一度どうぞ"); });
     }
   });
 
@@ -666,8 +871,8 @@
   var dModal=document.getElementById("diary-modal");
   var savedWho=lsGet("fs8k2-who"); if(savedWho) dWho=savedWho;
   function syncWho(){ document.querySelectorAll("#d-who button").forEach(function(x){x.setAttribute("aria-pressed",x.dataset.p===dWho?"true":"false");}); }
-  function openDiaryModal(){
-    document.getElementById("d-date").value=today();
+  function openDiaryModal(date){
+    document.getElementById("d-date").value=(typeof date==="string"&&date)?date:today();
     document.getElementById("d-title").value="";
     document.getElementById("d-body").value=lsGet("fs8k2-draft")||"";
     document.getElementById("d-msg").classList.remove("show");
@@ -718,7 +923,7 @@
     .then(function(r){return r.json();})
     .then(function(j){ if(!j.ok) throw new Error(j.error||"error");
       if(sentPhoto) j.entry.localPhoto=sentPhoto.url; // ドライブ側の縮小画像ができるまで手元の写真を表示
-      diary.push(j.entry); diaryLoaded=true; diaryOpen=null; renderDiary();
+      diary.push(j.entry); diaryLoaded=true; diaryOpen=null; rerenderDiary();
       lsSet("fs8k2-draft",""); closeDiaryModal();
       btn.disabled=false; btn.textContent="日記に残す";
       toast("📖 日記に1ページ増えました"); })
